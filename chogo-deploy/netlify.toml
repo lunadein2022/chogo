@@ -1,12 +1,11 @@
-# 수동(드래그) 배포용 — 빌드 단계 없이 이미 빌드된 파일을 그대로 올립니다.
-[functions]
-  directory = "netlify/functions"
+# 수동/Git 배포용 — 이미 빌드된 파일 + 스트리밍 Edge Function
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+# /api/claude → Edge Function (스트리밍으로 10초 제한 회피)
+[[edge_functions]]
+  path = "/api/claude"
+  function = "claude"
 
+# SPA 폴백
 [[redirects]]
   from = "/*"
   to = "/index.html"
