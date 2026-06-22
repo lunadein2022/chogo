@@ -1,0 +1,13 @@
+# 수동(드래그) 배포용 — 빌드 단계 없이 이미 빌드된 파일을 그대로 올립니다.
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
