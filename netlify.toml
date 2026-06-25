@@ -1,11 +1,7 @@
-# 수동/Git 배포용 — 이미 빌드된 파일 + 스트리밍 Edge Function
-
-# /api/claude → Edge Function (스트리밍으로 10초 제한 회피)
 [[edge_functions]]
   path = "/api/claude"
   function = "claude"
 
-# SPA 폴백
 [[redirects]]
   from = "/*"
   to = "/index.html"
