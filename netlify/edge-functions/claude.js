@@ -7,15 +7,29 @@ export default async (request) => {
   const apiKey = Netlify.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) return json({ error: "서버에 ANTHROPIC_API_KEY가 설정되지 않았습니다." }, 500);
 
-  let system, userText;
+  let system, userText, images;
   try {
     const b = await request.json();
     system = b.system;
     userText = b.userText;
+    images = Array.isArray(b.images) ? b.images : [];
   } catch {
     return json({ error: "잘못된 요청 형식입니다." }, 400);
   }
   if (!userText) return json({ error: "userText가 비어 있습니다." }, 400);
+
+  // 이미지가 있으면 멀티모달 content 배열로 구성 (인재상 이미지 등)
+  let content;
+  if (images.length) {
+    content = [
+      ...images
+        .filter((im) => im && im.data && im.media_type)
+        .map((im) => ({ type: "image", source: { type: "base64", media_type: im.media_type, data: im.data } })),
+      { type: "text", text: userText },
+    ];
+  } else {
+    content = userText;
+  }
 
   let upstream;
   try {
@@ -31,7 +45,7 @@ export default async (request) => {
         max_tokens: 8192,
         stream: true,
         system: system || "",
-        messages: [{ role: "user", content: userText }],
+        messages: [{ role: "user", content }],
       }),
     });
   } catch (e) {
